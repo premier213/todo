@@ -8,12 +8,12 @@ import {
   useForm
 } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { add } from '../store/reducers/task.slice';
+import { add, edit } from '../store/reducers/task.slice';
 import { NewTaskButton } from '../components/button';
 import TaskRadioField from '../components/taskRadioField';
 import TaskTextField from '../components/taskTextField';
 import { v4 as uuidv4 } from 'uuid';
-import { DialogProps } from '../components/modal';
+import { DialogProps } from './modal';
 
 type Inputs = {
   title: string;
@@ -25,22 +25,30 @@ export interface FieldProps<T> {
   fieldState: ControllerFieldState;
 }
 
-const FormTask = ({ onClose }: Pick<DialogProps, 'onClose'>) => {
+const FormTask = ({ isEdit, close }: Pick<DialogProps, 'isEdit' | 'close'>) => {
   const dispatch = useDispatch();
   const { handleSubmit, control, reset } = useForm<Inputs>({
-    defaultValues: { title: '', description: '', priority: 'low' }
+    defaultValues: {
+      title: isEdit?.title || '',
+      description: isEdit?.description || '',
+      priority: isEdit?.priority || 'low'
+    }
   });
 
   // submit form
   const onSubmit: SubmitHandler<Inputs> = (data: Inputs) => {
-    const formData = {
-      ...data,
-      id: uuidv4(),
-      completed: false
-    };
-    dispatch(add(formData));
+    if (isEdit) {
+      dispatch(edit({ isEdit, data }));
+    } else {
+      const formData = {
+        ...data,
+        id: uuidv4(),
+        completed: false
+      };
+      dispatch(add(formData));
+    }
     reset();
-    onClose();
+    close();
   };
 
   return (
@@ -120,7 +128,11 @@ const FormTask = ({ onClose }: Pick<DialogProps, 'onClose'>) => {
         />
       </div>
       <div className='mt-4 text-center'>
-        <NewTaskButton label='Add To Tasks' className='w-1/3' type='submit' />
+        <NewTaskButton
+          label={isEdit ? 'Edit Task' : 'Add To Tasks'}
+          className='w-1/3'
+          type='submit'
+        />
       </div>
     </form>
   );

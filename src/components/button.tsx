@@ -1,7 +1,5 @@
-import Button from '@mui/material/Button';
+import Button, { ButtonProps } from '@mui/material/Button';
 import orange from '@mui/material/colors/orange';
-import blue from '@mui/material/colors/blue';
-import green from '@mui/material/colors/green';
 
 export interface TaskButtonProps {
   label: string;
@@ -9,9 +7,11 @@ export interface TaskButtonProps {
   className?: string;
   isClicked?: () => void;
 }
-export interface MiddleSizeButton {
+export interface MiddleSizeButton extends ButtonProps {
+  colored: 'red' | 'green' | 'orange' | 'sky';
   label: string;
 }
+
 export const NewTaskButton = (props: TaskButtonProps) => {
   const { label, isClicked, className, type } = props;
 
@@ -37,7 +37,7 @@ export const NewTaskButton = (props: TaskButtonProps) => {
   );
 };
 
-export const MiddleSizeButton = (props: any) => (
+export const MiddleSizeButton = (props: MiddleSizeButton) => (
   <Button
     {...props}
     variant='contained'

@@ -1,5 +1,5 @@
 export interface PriorityProps {
-  color: string;
+  color: string | undefined;
 }
 
 const PriorityLevel = ({ color }: PriorityProps) => {
